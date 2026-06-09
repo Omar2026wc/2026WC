@@ -646,7 +646,6 @@ function copyLink(url,btn){
   navigator.clipboard.writeText(url)
     .then(function(){ var t=btn.textContent; btn.textContent='✅ تم'; setTimeout(function(){btn.textContent=t;},2000); toast('✅ تم نسخ الرابط'); })
     .catch(function(){ toast('⚠️ انسخ الرابط يدوياً'); });
-}
 function renderGrpList(){
 
   var el=document.getElementById('grpListEl');
