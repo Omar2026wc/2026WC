@@ -260,7 +260,7 @@ select option{background:#161b22}
         </div>
         <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
           <div class="pw-row">
-            <input type="password" id="newPwd" class="pw-inp" placeholder="كلمة سر جديدة..." autocomplete="off"/>
+            <input type="password" id="newPwd" class="pw-inp" placeholder="كلمة سر جديدة" autocomplete="off"/>
             <button class="btn-sm" id="changePwdBtn">🔑 تغيير</button>
           </div>
           <button class="btn-sm red" id="logoutBtn">🚪 خروج</button>
@@ -316,7 +316,7 @@ select option{background:#161b22}
       <div class="card">
         <div class="sec-lbl">👤 اسمك في المجموعة</div>
         <div class="prow">
-          <input class="inp" id="pname" placeholder="أدخل اسمك للبدء..."/>
+          <input class="inp" id="pname" placeholder="أدخل اسمك للبدء"/>
           <button class="btn" id="addBtn">← ابدأ</button>
         </div>
         <div id="ptags" class="tags"></div>
@@ -766,7 +766,7 @@ function renderActualForm(){
   h+='<div><div class="sec-lbl">🎖️ جوائز البطولة</div><div class="agrid">';
   aw.forEach(function(a){
     h+='<div class="abox"><div class="flabel">'+a.ic+' '+a.l+'</div>'
-      +'<input class="ainp" type="text" value="'+esc(src[a.id]||'')+'" placeholder="اسم اللاعب..." data-af="'+a.id+'"/></div>';
+      +'<input class="ainp" type="text" value="'+esc(src[a.id]||'')+'" placeholder="اسم اللاعب" data-af="'+a.id+'"/></div>';
   });
   h+='</div></div>';
   var el=document.getElementById('adminActualEl'); el.innerHTML=h;
@@ -818,7 +818,7 @@ function disEdit(){ return isAdmin()||isPast()||!activeP; }
 
 function persist(){
   if(!curGid||isAdmin()) return;
-  showSync('⏳ جارٍ الحفظ...');
+  showSync('⏳ جارٍ الحفظ');
   fbSet('grpdata/'+curGid,{players:players,preds:preds})
     .then(function(){ showSync('✅ تم الحفظ','ok'); })
     .catch(function(){ showSync('❌ خطأ في الحفظ','err'); });
@@ -885,7 +885,7 @@ function renderAll(){ renderTags(); renderTabs(); renderLb(); renderSecs(); }
 function renderTags(){
   var locked=isPast();
   var pi=document.getElementById('pname'), pb=document.getElementById('addBtn');
-  if(pi){ pi.disabled=locked; pi.placeholder=locked?'🔒 انتهى وقت التوقعات':'أدخل اسمك للبدء...'; }
+  if(pi){ pi.disabled=locked; pi.placeholder=locked?'🔒 انتهى وقت التوقعات':'أدخل اسمك للبدء'; }
   if(pb) pb.disabled=locked;
   // إظهار الاسم الحالي فقط
   document.getElementById('ptags').innerHTML = (activeP&&activeP!=='__admin__')
@@ -975,7 +975,7 @@ function renderSecs(){
   aw.forEach(function(a){
     var v=src[a.id]||'', cls=(!dis&&ac[a.id])?(v===ac[a.id]?'sc':'sw'):'';
     h+='<div class="abox"><div class="flabel">'+a.ic+' '+a.l+'</div>'
-      +'<input class="ainp '+cls+'" type="text" value="'+esc(v)+'" placeholder="اسم اللاعب..." data-pf="'+a.id+'" '+(dis?'disabled':'')+'"/></div>';
+      +'<input class="ainp '+cls+'" type="text" value="'+esc(v)+'" placeholder="اسم اللاعب" data-pf="'+a.id+'" '+(dis?'disabled':'')+'"/></div>';
   });
   h+='</div></div>';
   el.innerHTML=h;
