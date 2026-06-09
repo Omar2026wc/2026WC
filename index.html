@@ -647,10 +647,13 @@ function copyLink(url,btn){
     .then(function(){ var t=btn.textContent; btn.textContent='✅ تم'; setTimeout(function(){btn.textContent=t;},2000); toast('✅ تم نسخ الرابط'); })
     .catch(function(){ toast('⚠️ انسخ الرابط يدوياً'); });
 function renderGrpList(){
-}// ═══════════════════════════════════════════════
-//  MEMBERS PANEL — حذف مشاركات من الإدارة
-// ═══════════════════════════════════════════════
+   ...
+}
+
+
 function showMembers(gid,name){
+   ...
+}
   curMembersGid=gid;
   document.getElementById('membersPanelTitle').textContent='أفراد مجموعة: '+name;
   document.getElementById('membersPanel').style.display='';
