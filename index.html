@@ -659,18 +659,22 @@ function renderGrpList(){
         +'<div class="gi-top"><div class="gi-left"><span class="gi-emoji">'+g.icon+'</span>'
         +'<div><div class="gi-name">'+esc(g.name)+(g.desc?' <span style="font-size:.65rem;color:#6e7681">· '+esc(g.desc)+'</span>':'')+'</div></div></div>'
         +'<div class="gi-right">'
-        +'<button class="btn-sm" data-membid="'+xe(g.id)+'" data-membname="'+xe(g.name)+'">👥 الأفراد</button>'
+        +''
         +'<button class="btn-sm ok" data-openid="'+xe(g.id)+'">📂 فتح</button>'
         +'<button class="btn-sm red" data-delid="'+xe(g.id)+'">🗑️ حذف</button>'
         +'</div></div>'
         +'<div class="link-box"><span style="font-size:.65rem;color:#6e7681">🔗 رابط المشاركين:</span>'
         +'<span class="link-val">'+link+'</span>'
         +'<button class="btn-sm" data-copylink="'+xe(link)+'">📋 نسخ</button>'
-        +'</div></div>';
+        +'</div>'
+
++'<div id="members_'+g.id+'" style="margin-top:8px;padding-top:8px;border-top:1px solid #30363d;">'
++'<div style="color:#6e7681;font-size:.7rem">جارٍ تحميل المشاركين...</div>'
++'</div>'
+
++'</div>';
     }).join('');
-    el.querySelectorAll('[data-membid]').forEach(function(b){
-      b.addEventListener('click',function(){ showMembers(b.dataset.membid,b.dataset.membname); });
-    });
+    
     el.querySelectorAll('[data-openid]').forEach(function(b){
       b.addEventListener('click',function(){
         curGid=b.dataset.openid;
@@ -685,7 +689,44 @@ function renderGrpList(){
     });
   });
 }
+arr.forEach(function(g){
 
+  fbGet('grpdata/'+g.id).then(function(data){
+
+    var players =
+      (data && data.players)
+      ? data.players.filter(function(p){ return p; })
+      : [];
+
+    var box =
+      document.getElementById('members_'+g.id);
+
+    if(!box) return;
+
+    if(players.length===0){
+
+      box.innerHTML =
+        '<div style="color:#6e7681;font-size:.7rem">لا يوجد مشاركون</div>';
+
+      return;
+    }
+
+    box.innerHTML =
+      '<div style="color:#56d364;font-weight:700;margin-bottom:6px">👥 '
+      + players.length +
+      ' مشارك</div>' +
+
+      players.map(function(p){
+
+        return '<span style="display:inline-block;margin:2px;padding:4px 10px;border-radius:20px;background:#21262d;border:1px solid #30363d;font-size:.72rem">👤 '
+        + p +
+        '</span>';
+
+      }).join('');
+
+  });
+
+});
 // ═══════════════════════════════════════════════
 //  MEMBERS PANEL — حذف مشاركات من الإدارة
 // ═══════════════════════════════════════════════
