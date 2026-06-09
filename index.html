@@ -689,6 +689,14 @@ function renderGrpList(){
     });
   });
 }
+el.querySelectorAll('[data-copylink]').forEach(function(b){
+  b.addEventListener('click',function(){
+    copyLink(b.dataset.copylink,b);
+  });
+});
+
+/* أضف هنا */
+
 arr.forEach(function(g){
 
   fbGet('grpdata/'+g.id).then(function(data){
@@ -706,7 +714,7 @@ arr.forEach(function(g){
     if(players.length===0){
 
       box.innerHTML =
-        '<div style="color:#6e7681;font-size:.7rem">لا يوجد مشاركون</div>';
+      '<div style="color:#6e7681;font-size:.7rem">لا يوجد مشاركون</div>';
 
       return;
     }
@@ -724,10 +732,22 @@ arr.forEach(function(g){
 
       }).join('');
 
+  }).catch(function(){
+
+    var box =
+      document.getElementById('members_'+g.id);
+
+    if(box){
+      box.innerHTML =
+      '<div style="color:#6e7681;font-size:.7rem">لا يوجد مشاركون</div>';
+    }
+
   });
 
 });
-// ═══════════════════════════════════════════════
+
+});
+}// ═══════════════════════════════════════════════
 //  MEMBERS PANEL — حذف مشاركات من الإدارة
 // ═══════════════════════════════════════════════
 function showMembers(gid,name){
