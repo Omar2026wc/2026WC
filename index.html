@@ -1065,57 +1065,55 @@ function renderTabs(){
 }
 
 function renderLb(){
+
   var el=document.getElementById('lbEl');
-  if(!players.length){ el.innerHTML=''; return; }
-  var sc=var ranking = players.map(function(p){
 
-  return {
-    name: p,
-    score: calcScore(p),
-    submitted: preds[p] && preds[p]._submitted
-  };
+  if(!players.length){
+    el.innerHTML='';
+    return;
+  }
 
-}).sort(function(a,b){
+  var sc=players.map(function(p){
 
-  return b.score - a.score;
+    return {
+      n:p,
+      s:calcScore(p)
+    };
 
-});
+  }).sort(function(a,b){
 
-box.innerHTML =
+    return b.s-a.s;
 
-  '<div style="color:#56d364;font-weight:700;margin-bottom:8px">🏆 الترتيب ('+
-  ranking.length+
-  ' مشارك)</div>'
+  });
 
-  +
-
-  ranking.map(function(r,i){
+  el.innerHTML=sc.map(function(r,i){
 
     var medal='';
 
     if(i===0) medal='🥇';
     else if(i===1) medal='🥈';
     else if(i===2) medal='🥉';
-    else medal=(i+1)+'️⃣';
+    else medal='#'+(i+1);
 
     return ''
 
-    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #30363d;">'
+    +'<div class="lb-c '+(i===0?'top':'')+'">'
 
-    +'<span>'
+    +'<div class="lb-nm">'
     +medal+' '
-    +esc(r.name)
-    +(r.submitted ? ' ✅' : ' ⏳')
-    +'</span>'
+    +esc(r.n)
+    +'</div>'
 
-    +'<span style="font-weight:bold;color:#58a6ff;">'
-    +r.score+
-    ' نقطة'
-    +'</span>'
+    +'<div class="lb-pts">'
+    +r.s
+    +'</div>'
+
+    +'<div class="lb-sub">نقطة</div>'
 
     +'</div>';
 
   }).join('');
+
 }
 
 function renderSecs(){
