@@ -813,7 +813,16 @@ arr.forEach(function(g){
   +(submitted ? ' ✅' : ' ⏳')
   +'</span>'
 
-  +'<span style="font-weight:bold;color:#58a6ff;">'
++'<span style="display:flex;gap:8px;align-items:center;">'
+
++'<span style="font-weight:bold;color:#58a6ff;">'
++score+
+' نقطة'
++'</span>'
+
++'<button class="btn-sm red" onclick="deleteMemberFromGroup(\''+g.id+'\',\''+xe(p)+'\')">🗑️</button>'
+
++'</span>'
   +score+
   ' نقطة'
   +'</span>'
@@ -888,7 +897,41 @@ function deleteMember(name){
   });
 }
 
-// ═══════════════════════════════════════════════
+// ════════function deleteMemberFromGroup(gid,name){
+
+  if(!confirm('حذف مشاركة '+name+' ؟')) return;
+
+  fbGet('grpdata/'+gid).then(function(data){
+
+    var ps=(data && data.players)
+      ? data.players.filter(Boolean)
+      : [];
+
+    var pr=(data && data.preds)
+      ? data.preds
+      : {};
+
+    ps=ps.filter(function(p){
+      return p!==name;
+    });
+
+    delete pr[name];
+
+    fbSet('grpdata/'+gid,{
+      players:ps,
+      preds:pr
+    }).then(function(){
+
+      toast('🗑️ تم حذف '+name);
+
+      renderGrpList();
+
+    });
+
+  });
+
+}
+═══════════════════════════════════════
 //  ACTUAL RESULTS (admin)
 // ═══════════════════════════════════════════════
 function renderActualForm(){
