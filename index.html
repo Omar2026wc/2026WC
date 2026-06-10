@@ -495,11 +495,18 @@ function showAdmin(){
   document.getElementById('S_ADMIN').style.display='';
   document.getElementById('S_PRED').style.display='none';
   document.getElementById('S_SUCCESS').style.display='none';
+
   document.getElementById('btnHome').style.display='';
   document.getElementById('btnAdmin').style.display='none';
+
   document.getElementById('grpPill').style.display='none';
   document.getElementById('hSub').textContent='⚙️ لوحة إدارة المجموعات';
-  fbGet('actual').then(function(v){ adminAct=v||newPred(); renderActualForm(); });
+
+  fbGet('actual').then(function(v){
+    adminAct=v || newPred();
+    renderActualForm();
+  });
+
   renderGrpList();
   buildQuickBtns();
 }
