@@ -683,14 +683,21 @@ function renderGrpList(){
       +'</div>'
 
       +'<div class="gi-right">'
-      +'<button class="btn-sm" data-membid="'+g.id+'" data-membname="'+esc(g.name)+'">👥 الأفراد</button>'
       +'<button class="btn-sm ok" data-openid="'+g.id+'">📂 فتح</button>'
       +'<button class="btn-sm red" data-delid="'+g.id+'">🗑️ حذف</button>'
       +'</div>'
 
-      +'</div>'
++'<div class="link-box">'
++'<span style="font-size:.65rem;color:#6e7681">🔗 رابط المشاركين:</span>'
++'<span class="link-val">'+link+'</span>'
++'<button class="btn-sm" data-copylink="'+xe(link)+'">📋 نسخ</button>'
++'</div>'
 
-      +'<div class="link-box">'
++'<div id="members_'+g.id+'" style="margin-top:10px;padding-top:10px;border-top:1px solid #30363d;">'
++'<div style="color:#6e7681;font-size:.75rem">جارٍ تحميل المشاركين...</div>'
++'</div>'
+
++'</div>';
       +'<span class="link-val">'+link+'</span>'
       +'<button class="btn-sm" data-copylink="'+link+'">📋 نسخ</button>'
       +'</div>'
@@ -738,7 +745,85 @@ function renderGrpList(){
         copyLink(b.dataset.copylink,b);
       });
     });
+/* تحميل المشاركين تحت كل مجموعة */
 
+arr.forEach(function(g){
+
+  fbGet('grpdata/'+g.id)
+
+  .then(function(data){
+
+    var box=document.getElementById('members_'+g.id);
+
+    if(!box) return;
+
+    var players=
+      (data && data.players)
+      ? data.players.filter(Boolean)
+      : [];
+
+    var preds=
+      (data && data.preds)
+      ? data.preds
+      : {};
+
+    if(!players.length){
+
+      box.innerHTML=
+      '<div style="color:#6e7681;font-size:.75rem">لا يوجد مشاركون</div>';
+
+      return;
+
+    }
+
+    box.innerHTML=
+
+      '<div style="color:#56d364;font-weight:700;margin-bottom:8px">👥 '
+      +players.length+
+      ' مشارك</div>'
+
+      +
+
+      players.map(function(p){
+
+        var submitted=
+          preds[p] &&
+          preds[p]._submitted;
+
+        return ''
+
+        +'<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #30363d;">'
+
+        +'<span>👤 '+esc(p)+'</span>'
+
+        +'<span style="font-size:.75rem;">'
+
+        +(submitted
+          ? '<span style="color:#56d364">✅ أرسل</span>'
+          : '<span style="color:#f0b429">⏳ لم يرسل</span>')
+
+        +'</span>'
+
+        +'</div>';
+
+      }).join('');
+
+  })
+
+  .catch(function(){
+
+    var box=document.getElementById('members_'+g.id);
+
+    if(box){
+
+      box.innerHTML=
+      '<div style="color:#f85149;font-size:.75rem">تعذر تحميل المشاركين</div>';
+
+    }
+
+  });
+
+});
   });
 
 }
