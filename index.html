@@ -784,30 +784,43 @@ arr.forEach(function(g){
 
       +
 
-      players.map(function(p){
+      players
+.sort(function(a,b){
+  return calcScore(b)-calcScore(a);
+})
+.map(function(p,idx){
 
-        var submitted=
-          preds[p] &&
-          preds[p]._submitted;
+  var submitted=
+    preds[p] &&
+    preds[p]._submitted;
 
-        return ''
+  var score=calcScore(p);
 
-        +'<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #30363d;">'
+  var medal='';
 
-        +'<span>👤 '+esc(p)+'</span>'
+  if(idx===0) medal='🥇';
+  else if(idx===1) medal='🥈';
+  else if(idx===2) medal='🥉';
+  else medal=(idx+1)+'️⃣';
 
-        +'<span style="font-size:.75rem;">'
+  return ''
 
-        +(submitted
-          ? '<span style="color:#56d364">✅ أرسل</span>'
-          : '<span style="color:#f0b429">⏳ لم يرسل</span>')
+  +'<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #30363d;">'
 
-        +'</span>'
+  +'<span>'
+  +medal+' '
+  +esc(p)
+  +(submitted ? ' ✅' : ' ⏳')
+  +'</span>'
 
-        +'</div>';
+  +'<span style="font-weight:bold;color:#58a6ff;">'
+  +score+
+  ' نقطة'
+  +'</span>'
 
-      }).join('');
+  +'</div>';
 
+}).join('');
   })
 
   .catch(function(){
