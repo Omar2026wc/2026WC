@@ -260,7 +260,7 @@ select option{background:#161b22}
         </div>
         <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
           <div class="pw-row">
-            <input type="password" id="newPwd" class="pw-inp" placeholder="كلمة سر جديدة" autocomplete="off"/>
+            <input type="password" id="newPwd" class="pw-inp" placeholder="كلمة سر جديدة..." autocomplete="off"/>
             <button class="btn-sm" id="changePwdBtn">🔑 تغيير</button>
           </div>
           <button class="btn-sm red" id="logoutBtn">🚪 خروج</button>
@@ -316,7 +316,7 @@ select option{background:#161b22}
       <div class="card">
         <div class="sec-lbl">👤 اسمك في المجموعة</div>
         <div class="prow">
-          <input class="inp" id="pname" placeholder="أدخل اسمك للبدء"/>
+          <input class="inp" id="pname" placeholder="أدخل اسمك للبدء..."/>
           <button class="btn" id="addBtn">← ابدأ</button>
         </div>
         <div id="ptags" class="tags"></div>
@@ -648,46 +648,94 @@ function copyLink(url,btn){
     .catch(function(){ toast('⚠️ انسخ الرابط يدوياً'); });
 }
 function renderGrpList(){
+
   var el=document.getElementById('grpListEl');
+
   el.innerHTML='<div class="sp-wrap"><div class="spinner"></div></div>';
+
   fbGet('groups').then(function(grps){
-    if(!grps||!Object.keys(grps).length){ el.innerHTML='<p class="notice">لا توجد مجموعات بعد.</p>'; return; }
-    var arr=Object.entries(grps).map(function(e){ return Object.assign({id:e[0]},e[1]); });
-    el.innerHTML=arr.map(function(g){
-      var link=g.link||location.href.split('?')[0]+'?g='+g.id;
-      return '<div class="grp-item">'
-        +'<div class="gi-top"><div class="gi-left"><span class="gi-emoji">'+g.icon+'</span>'
-        +'<div><div class="gi-name">'+esc(g.name)+(g.desc?' <span style="font-size:.65rem;color:#6e7681">· '+esc(g.desc)+'</span>':'')+'</div></div></div>'
-        +'<div class="gi-right">'
-        +'<button class="btn-sm" data-membid="'+xe(g.id)+'" data-membname="'+xe(g.name)+'">👥 الأفراد</button>'
-        +'<button class="btn-sm ok" data-openid="'+xe(g.id)+'">📂 فتح</button>'
-        +'<button class="btn-sm red" data-delid="'+xe(g.id)+'">🗑️ حذف</button>'
-        +'</div></div>'
-        +'<div class="link-box"><span style="font-size:.65rem;color:#6e7681">🔗 رابط المشاركين:</span>'
-        +'<span class="link-val">'+link+'</span>'
-        +'<button class="btn-sm" data-copylink="'+xe(link)+'">📋 نسخ</button>'
-        +'</div></div>';
-    }).join('');
-    el.querySelectorAll('[data-membid]').forEach(function(b){
-      b.addEventListener('click',function(){ showMembers(b.dataset.membid,b.dataset.membname); });
+
+    if(!grps || !Object.keys(grps).length){
+      el.innerHTML='<p class="notice">لا توجد مجموعات بعد.</p>';
+      return;
+    }
+
+    var arr=Object.entries(grps).map(function(e){
+      return Object.assign({id:e[0]},e[1]);
     });
-    el.querySelectorAll('[data-openid]').forEach(function(b){
+
+    el.innerHTML=arr.map(function(g){
+
+      var link=g.link || location.href.split('?')[0]+'?g='+g.id;
+
+      return '<div class="grp-item">'
+      +'<div class="gi-top">'
+      +'<div class="gi-left">'
+      +'<span class="gi-emoji">'+(g.icon||'👥')+'</span>'
+      +'<div><div class="gi-name">'+esc(g.name)+'</div></div>'
+      +'</div>'
+
+      +'<div class="gi-right">'
+      +'<button class="btn-sm" data-membid="'+g.id+'" data-membname="'+esc(g.name)+'">👥 الأفراد</button>'
+      +'<button class="btn-sm ok" data-openid="'+g.id+'">📂 فتح</button>'
+      +'<button class="btn-sm red" data-delid="'+g.id+'">🗑️ حذف</button>'
+      +'</div>'
+
+      +'</div>'
+
+      +'<div class="link-box">'
+      +'<span class="link-val">'+link+'</span>'
+      +'<button class="btn-sm" data-copylink="'+link+'">📋 نسخ</button>'
+      +'</div>'
+
+      +'</div>';
+
+    }).join('');
+
+    el.querySelectorAll('[data-membid]').forEach(function(b){
       b.addEventListener('click',function(){
-        curGid=b.dataset.openid;
-        fbGet('groups/'+curGid).then(function(grp){ if(grp) showPredAsAdmin(Object.assign({id:curGid},grp)); });
+        showMembers(
+          b.dataset.membid,
+          b.dataset.membname
+        );
       });
     });
+
+    el.querySelectorAll('[data-openid]').forEach(function(b){
+      b.addEventListener('click',function(){
+
+        curGid=b.dataset.openid;
+
+        fbGet('groups/'+curGid).then(function(grp){
+
+          if(grp){
+            activeP='__admin__';
+            showPredAsAdmin(
+              Object.assign({id:curGid},grp)
+            );
+          }
+
+        });
+
+      });
+    });
+
     el.querySelectorAll('[data-delid]').forEach(function(b){
-      b.addEventListener('click',function(){ delGrp(b.dataset.delid); });
+      b.addEventListener('click',function(){
+        delGrp(b.dataset.delid);
+      });
     });
+
     el.querySelectorAll('[data-copylink]').forEach(function(b){
-      b.addEventListener('click',function(){ copyLink(b.dataset.copylink,b); });
+      b.addEventListener('click',function(){
+        copyLink(b.dataset.copylink,b);
+      });
     });
+
   });
+
 }
-// ═══════════════════════════════════════════════
-//  MEMBERS PANEL — حذف مشاركات من الإدارة
-// ═══════════════════════════════════════════════
+
 function showMembers(gid,name){
   curMembersGid=gid;
   document.getElementById('membersPanelTitle').textContent='أفراد مجموعة: '+name;
@@ -766,7 +814,7 @@ function renderActualForm(){
   h+='<div><div class="sec-lbl">🎖️ جوائز البطولة</div><div class="agrid">';
   aw.forEach(function(a){
     h+='<div class="abox"><div class="flabel">'+a.ic+' '+a.l+'</div>'
-      +'<input class="ainp" type="text" value="'+esc(src[a.id]||'')+'" placeholder="اسم اللاعب" data-af="'+a.id+'"/></div>';
+      +'<input class="ainp" type="text" value="'+esc(src[a.id]||'')+'" placeholder="اسم اللاعب..." data-af="'+a.id+'"/></div>';
   });
   h+='</div></div>';
   var el=document.getElementById('adminActualEl'); el.innerHTML=h;
@@ -818,7 +866,7 @@ function disEdit(){ return isAdmin()||isPast()||!activeP; }
 
 function persist(){
   if(!curGid||isAdmin()) return;
-  showSync('⏳ جارٍ الحفظ');
+  showSync('⏳ جارٍ الحفظ...');
   fbSet('grpdata/'+curGid,{players:players,preds:preds})
     .then(function(){ showSync('✅ تم الحفظ','ok'); })
     .catch(function(){ showSync('❌ خطأ في الحفظ','err'); });
@@ -885,7 +933,7 @@ function renderAll(){ renderTags(); renderTabs(); renderLb(); renderSecs(); }
 function renderTags(){
   var locked=isPast();
   var pi=document.getElementById('pname'), pb=document.getElementById('addBtn');
-  if(pi){ pi.disabled=locked; pi.placeholder=locked?'🔒 انتهى وقت التوقعات':'أدخل اسمك للبدء'; }
+  if(pi){ pi.disabled=locked; pi.placeholder=locked?'🔒 انتهى وقت التوقعات':'أدخل اسمك للبدء...'; }
   if(pb) pb.disabled=locked;
   // إظهار الاسم الحالي فقط
   document.getElementById('ptags').innerHTML = (activeP&&activeP!=='__admin__')
@@ -975,7 +1023,7 @@ function renderSecs(){
   aw.forEach(function(a){
     var v=src[a.id]||'', cls=(!dis&&ac[a.id])?(v===ac[a.id]?'sc':'sw'):'';
     h+='<div class="abox"><div class="flabel">'+a.ic+' '+a.l+'</div>'
-      +'<input class="ainp '+cls+'" type="text" value="'+esc(v)+'" placeholder="اسم اللاعب" data-pf="'+a.id+'" '+(dis?'disabled':'')+'"/></div>';
+      +'<input class="ainp '+cls+'" type="text" value="'+esc(v)+'" placeholder="اسم اللاعب..." data-pf="'+a.id+'" '+(dis?'disabled':'')+'"/></div>';
   });
   h+='</div></div>';
   el.innerHTML=h;
