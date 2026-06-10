@@ -1067,11 +1067,54 @@ function renderTabs(){
 function renderLb(){
   var el=document.getElementById('lbEl');
   if(!players.length){ el.innerHTML=''; return; }
-  var sc=players.map(function(p){return{n:p,pts:calcScore(p)};}).sort(function(a,b){return b.pts-a.pts;});
-  var mx=sc[0].pts, med=['🥇','🥈','🥉'];
-  el.innerHTML=sc.map(function(s,i){
-    var isMe=activeP===s.n;
-    return '<div class="lb-c'+(s.pts===mx&&mx>0?' top':'')+(isMe?' top':'')+'"><div class="lb-nm">'+(med[i]||'')+' '+esc(s.n)+(isMe?' ★':'')+'</div><div class="lb-pts">'+s.pts+'</div><div class="lb-sub">نقطة</div></div>';
+  var sc=var ranking = players.map(function(p){
+
+  return {
+    name: p,
+    score: calcScore(p),
+    submitted: preds[p] && preds[p]._submitted
+  };
+
+}).sort(function(a,b){
+
+  return b.score - a.score;
+
+});
+
+box.innerHTML =
+
+  '<div style="color:#56d364;font-weight:700;margin-bottom:8px">🏆 الترتيب ('+
+  ranking.length+
+  ' مشارك)</div>'
+
+  +
+
+  ranking.map(function(r,i){
+
+    var medal='';
+
+    if(i===0) medal='🥇';
+    else if(i===1) medal='🥈';
+    else if(i===2) medal='🥉';
+    else medal=(i+1)+'️⃣';
+
+    return ''
+
+    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #30363d;">'
+
+    +'<span>'
+    +medal+' '
+    +esc(r.name)
+    +(r.submitted ? ' ✅' : ' ⏳')
+    +'</span>'
+
+    +'<span style="font-weight:bold;color:#58a6ff;">'
+    +r.score+
+    ' نقطة'
+    +'</span>'
+
+    +'</div>';
+
   }).join('');
 }
 
